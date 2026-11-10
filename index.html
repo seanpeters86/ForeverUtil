@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#202825">
+  <title>Item Compare | ForeverUtil</title>
+  <script>
+    let savedTheme;
+    try { savedTheme = localStorage.getItem('foreverutil-theme'); } catch { }
+    document.documentElement.dataset.theme = savedTheme === 'light' || savedTheme === 'dark' ? savedTheme : (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+  <script>var whTooltips = { colorLinks: false, iconizeLinks: false, renameLinks: false };</script>
+  <script async src="https://wow.zamimg.com/js/tooltips.js"></script>
+  <script type="module" src="/src/app.ts"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./" aria-label="ForeverUtil home"><span class="brand-mark">F<span>.</span></span><span>FOREVER<span>UTIL</span></span></a>
+    <nav aria-label="Main navigation"><a class="nav-active" href="#compare">Item compare</a></nav>
+    <div class="top-right"><span class="status-dot"></span> WOW FOREVER <span class="top-separator"></span> <a href="https://www.wowhead.com/forever" target="_blank" rel="noopener noreferrer">Wowhead <span aria-hidden="true">↗</span></a><button id="theme-toggle" type="button" aria-label="Dark mode" aria-pressed="false" title="Switch to dark mode"></button></div>
+  </header>
+
+  <main id="compare" class="page">
+    <div class="breadcrumb">TOOLS <span>/</span> <strong>ITEM COMPARE</strong></div>
+    <div class="page-heading">
+      <div><div class="eyebrow"><span></span> FOREVER / TOOLKIT 01</div><h1>Item comparison<span>.</span></h1><p>Know what your next upgrade is worth.</p></div>
+      <div class="heading-meta"><span class="meta-icon">✦</span><div><strong>ITEM COMPARISON</strong><small>FOREVER TOOLKIT / 01</small></div></div>
+    </div>
+
+    <div class="workspace">
+      <section class="comparison" aria-label="Item comparison">
+        <div class="section-heading"><div><div class="section-kicker">THE COMPARISON</div><h2>Which item wins?</h2></div><button id="swap" class="text-button" type="button" title="Swap items"><span aria-hidden="true">⇄</span> Swap items</button></div>
+        <div id="verdict" class="verdict" role="status" aria-live="polite"><div class="verdict-main"><span class="verdict-marker" aria-hidden="true">◆</span><strong id="verdict-title"></strong></div><span id="verdict-detail"></span></div>
+        <div class="item-grid" id="items"></div>
+        <div class="breakdown-heading"><div><div class="section-kicker">THE DETAILS</div><h2>Stat breakdown</h2></div><span class="breakdown-note">VALUES ARE EDITABLE</span></div>
+        <div class="stat-table" id="stat-table"></div>
+        <div class="disclaimer"><span>i</span><p>Weapon DPS weights are estimates for melee weapons in the selected hand. Speed effects, weapon type, poisons, procs, set bonuses, gems, enchants, caps, and other effects are not modeled. Verify imported stats against the Wowhead tooltip.</p></div>
+      </section>
+
+      <aside class="weights-panel" aria-labelledby="weights-title">
+        <div class="weights-top"><div><div class="section-kicker light">YOUR SCORING</div><h2 id="weights-title">Stat weights</h2></div><span class="weights-symbol">✳</span></div>
+        <label class="field-label" for="profile">WEIGHT PROFILE</label>
+        <select id="profile"><option value="preset">Subtlety - Questing</option><option value="custom">Custom weights</option></select>
+        <div class="profile-description"><span class="profile-badge">ROGUE</span><span id="profile-description">Subtlety / Questing</span></div>
+        <label class="field-label" for="weapon-hand">WEAPON SLOT</label>
+        <select id="weapon-hand"><option value="mainHand">Main hand</option><option value="offHand">Off hand</option></select>
+        <div class="weapon-weight-heading"><span>WEAPON DPS WEIGHTS</span><span>EP / DPS</span></div>
+        <div id="weapon-weights"></div>
+        <p class="weapon-weight-note">Melee weapons only. Level 60 benchmark; approximate for questing. <a href="https://sixtysim.com/guides/rogue/subtlety/stats/" target="_blank" rel="noopener noreferrer">Source ↗</a></p>
+        <div class="weight-list-heading"><span>STAT</span><span>WEIGHT <small>EP</small></span></div>
+        <div id="weights"></div>
+        <button id="reset-weights" class="reset-button" type="button"><span aria-hidden="true">↺</span> Reset to preset</button>
+        <div class="weights-foot"><span class="foot-icon">✦</span><p>Attack Power is the baseline.<br><strong>1.00 EP = 1 Attack Power</strong></p></div>
+      </aside>
+    </div>
+    <footer><span>FOREVER<span class="footer-accent">UTIL</span> <span class="footer-divider">/</span> BUILT FOR THE JOURNEY</span><span>World of Warcraft is a trademark of Blizzard Entertainment.</span></footer>
+  </main>
+</body>
+</html>

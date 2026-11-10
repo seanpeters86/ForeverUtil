@@ -1,0 +1,22 @@
+{
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "typecheck": "tsc --noEmit",
+    "build": "npm run typecheck && vite build --base=./",
+    "preview": "vite preview --host 127.0.0.1",
+    "test": "node --test compare.test.mjs wowhead.test.mjs"
+  },
+  "dependencies": {
+    "effect": "^4.1.2",
+    "lucide": "^1.70.0"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2",
+    "vite": "^8.3.7"
+  }
+}
