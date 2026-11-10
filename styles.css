@@ -91,8 +91,9 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
 .brand > span:last-child span, .footer-accent { color: var(--muted); }
 .brand-mark { width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; background: var(--accent); color: var(--accent-ink); border-radius: 3px; font: 700 21px var(--body-font); }
 .brand-mark span { color: inherit; opacity: .7; }
-.topbar nav { align-self: stretch; display: flex; align-items: center; }
-.nav-active { height: 100%; display: flex; align-items: center; border-bottom: 3px solid var(--accent); color: var(--ink); font-size: 13px; font-weight: 700; }
+.topbar nav { align-self: stretch; display: flex; align-items: center; gap: 24px; }
+.topbar nav a { height: 100%; display: flex; align-items: center; border-bottom: 3px solid transparent; color: var(--secondary); font-size: 13px; font-weight: 700; white-space: nowrap; }
+.topbar nav .nav-active { border-bottom-color: var(--accent); color: var(--ink); }
 .top-right { margin-left: auto; display: flex; align-items: center; gap: 10px; color: var(--muted); font: 600 10px var(--mono-font); white-space: nowrap; }
 .top-right a { color: var(--secondary); font: 600 12px var(--body-font); }
 .status-dot { height: 7px; width: 7px; flex: none; border-radius: 50%; background: var(--accent); }
@@ -119,6 +120,52 @@ h1 span { color: var(--positive); }
 
 .workspace { display: grid; grid-template-columns: minmax(0, 1fr) 315px; align-items: start; gap: 28px; }
 .comparison { min-width: 0; }
+[hidden] { display: none !important; }
+.inventory { min-width: 0; }
+.inventory-count { color: var(--muted); font: 600 10px var(--mono-font); }
+.simc-form { padding: 18px; border: 1px solid var(--line); background: var(--surface); }
+.simc-form label, .inventory-toolbar label { color: var(--secondary); font: 700 10px var(--mono-font); }
+.simc-form textarea { width: 100%; min-height: 100px; resize: vertical; margin: 10px 0; padding: 10px; border: 1px solid var(--line); border-radius: 3px; color: var(--ink); background: var(--surface-soft); font: 11px/1.5 var(--mono-font); }
+.simc-form textarea:focus-visible { outline: 2px solid #d79b53; outline-offset: 3px; }
+.form-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; color: var(--muted); font-size: 11px; }
+.primary-button { min-height: 34px; padding: 0 14px; border: 0; border-radius: 3px; color: var(--accent-ink); background: var(--accent); font-weight: 700; font-size: 12px; }
+.inventory-toolbar { display: flex; align-items: center; gap: 12px; margin: 24px 0 12px; }
+.inventory-toolbar select { min-width: 150px; height: 36px; padding: 0 10px; border: 1px solid var(--line); border-radius: 3px; color: var(--ink); background: var(--surface); }
+.inventory-toolbar button { margin-left: auto; }
+.inventory-summary { padding: 13px 15px; border: 1px solid var(--line); background: var(--surface-soft); color: var(--secondary); font-size: 12px; line-height: 1.5; }
+.inventory-summary strong { color: var(--ink); }
+.inventory-summary.has-recommendation { padding: 0; border-color: var(--winner-line); border-radius: 4px; background: var(--surface); }
+.recommendation-heading { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 13px 16px; background: var(--winner-surface); color: var(--winner-ink); }
+.recommendation-heading > div:first-child { min-width: 0; }
+.recommendation-heading strong { display: block; color: var(--winner-ink); font-size: 15px; }
+.recommendation-eyebrow, .recommendation-total > span, .recommendation-label { display: block; font: 700 9px/1.5 var(--mono-font); }
+.recommendation-eyebrow { margin-bottom: 3px; }
+.recommendation-total { flex: none; text-align: right; }
+.recommendation-total strong { font: 700 18px/1.3 var(--mono-font); }
+.recommendation-total small { font-size: 10px; }
+.recommendation-items { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.recommendation-item { display: flex; align-items: center; min-width: 0; gap: 11px; padding: 15px 16px; }
+.recommendation-item + .recommendation-item { border-left: 1px solid var(--line); }
+.recommendation-icon { width: 40px; height: 40px; flex: none; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 3px; color: var(--positive); background: var(--surface-soft); overflow: hidden; }
+.recommendation-icon img { width: 100%; height: 100%; object-fit: cover; }
+.recommendation-identity { min-width: 0; }
+.recommendation-label { margin-bottom: 3px; color: var(--muted); text-transform: uppercase; }
+.recommendation-identity a { display: block; color: var(--quality-color, var(--ink)); font-size: 13px; font-weight: 700; overflow-wrap: anywhere; }
+.recommendation-identity a:hover { text-decoration: underline; }
+.recommendation-meta { display: block; margin-top: 3px; color: var(--muted); font: 10px/1.5 var(--mono-font); }
+.recommendation-warning { padding: 9px 16px; border-top: 1px solid var(--line); color: var(--secondary); background: var(--surface-soft); font-size: 11px; }
+.inventory-list { margin-top: 12px; border-top: 1px solid var(--line); }
+.inventory-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(110px, auto) 28px; align-items: center; gap: 12px; padding: 12px 10px; border-bottom: 1px solid var(--line); background: var(--surface); }
+.inventory-row.is-recommended { box-shadow: inset 3px 0 var(--winner-line); background: var(--winner-surface); }
+.inventory-recommendation { display: inline-block; margin-left: 8px; color: var(--winner-ink); font: 700 9px/1.5 var(--mono-font); }
+.inventory-name { min-width: 0; overflow-wrap: anywhere; font-weight: 700; }
+.inventory-name a { color: var(--quality-color, var(--ink)); }
+.inventory-name a:hover { text-decoration: underline; }
+.inventory-name small, .inventory-score small { display: block; margin-top: 4px; color: var(--muted); font: 10px/1.5 var(--mono-font); overflow-wrap: anywhere; }
+.inventory-score { color: var(--ink); text-align: right; font: 700 12px var(--mono-font); }
+.inventory-add { margin-top: 30px; }
+.inventory-add h2 { margin-bottom: 14px; }
+.inventory-add .lookup input { padding-left: 12px; }
 .section-heading, .breakdown-heading { display: flex; align-items: end; justify-content: space-between; gap: 15px; }
 .section-heading { margin-bottom: 16px; }
 h2 { margin-top: 7px; font-size: 22px; line-height: 1.2; font-weight: 700; }
@@ -254,7 +301,8 @@ footer > span:last-child { font: 400 10px var(--body-font); }
   .topbar { gap: 16px; padding: 0 15px; }
   .brand { font-size: 10px; }
   .brand-mark { width: 30px; height: 30px; }
-  .nav-active { font-size: 11px; }
+  .topbar nav { gap: 12px; }
+  .topbar nav a { font-size: 11px; }
   .top-right { gap: 4px; }
   .top-right a { font-size: 10px; }
   #theme-toggle { width: 34px; height: 34px; margin-left: 5px; }
@@ -268,4 +316,9 @@ footer > span:last-child { font: 400 10px var(--body-font); }
   .stat-row { min-width: 480px; }
   .breakdown-note { font-size: 8px; }
   .section-heading h2, .breakdown-heading h2 { font-size: 20px; }
+  .top-right a { display: none; }
+  .inventory-row { grid-template-columns: minmax(0, 1fr) minmax(85px, auto) 24px; gap: 7px; }
+  .recommendation-items { grid-template-columns: 1fr; }
+  .recommendation-item + .recommendation-item { border-left: 0; border-top: 1px solid var(--line); }
+  .inventory-recommendation { display: block; margin: 3px 0 0; }
 }

@@ -4,6 +4,7 @@ import { STATS, compareScores, defaultWeaponWeights, defaultWeights, emptyStats,
 import type { ItemReference, StatKey, StatValues, WeaponHand, WeaponWeights } from './compare';
 import { fetchItemIndex, fetchWowheadItem, qualityFromTooltip, searchItemIndex, shouldSearchAsYouType } from './wowhead';
 import type { SearchItem } from './wowhead';
+import { setupInventory } from './inventory';
 
 type Item = { name: string; stats: StatValues; source: string; id?: string; bonus?: string; icon?: string | undefined; quality?: number | undefined; weaponDps?: number | null | undefined; weaponSpeed?: number | null };
 type Profile = 'preset' | 'custom';
@@ -180,6 +181,7 @@ function updateResults() {
     cell.classList.toggle('negative', difference < 0);
     element(`#table-weight-${stat.key}`).textContent = format(state.weights[stat.key]);
   }
+  refreshInventory();
 }
 
 function renderAll() { renderItems(); renderTable(); renderWeights(); updateResults(); save(); }
@@ -360,6 +362,23 @@ resetButton.addEventListener('click', () => { state.weights = defaultWeights(); 
 const swapButton = element<HTMLButtonElement>('#swap');
 swapButton.replaceChildren(createElement(ArrowLeftRight, { width: 16, height: 16, 'aria-hidden': 'true' }), ' Swap items');
 swapButton.addEventListener('click', () => { state.items.reverse(); renderAll(); });
+const refreshInventory = setupInventory(() => ({ weights: state.weights, weaponWeights: state.weaponWeights }), loadItemIndex);
+function showView() {
+  const inventory = location.hash === '#inventory';
+  element<HTMLElement>('.comparison').hidden = inventory;
+  element<HTMLElement>('#gear-workspace').hidden = !inventory;
+  document.querySelectorAll<HTMLAnchorElement>('[data-view]').forEach(link => {
+    const active = link.dataset.view === (inventory ? 'inventory' : 'compare');
+    link.classList.toggle('nav-active', active);
+    if (active) link.setAttribute('aria-current', 'page'); else link.removeAttribute('aria-current');
+  });
+  element('h1').innerHTML = inventory ? 'My gear<span>.</span>' : 'Item comparison<span>.</span>';
+  element('.page-heading p').textContent = inventory ? 'Compare the gear you already have.' : 'Know what your next upgrade is worth.';
+  element('.breadcrumb strong').textContent = inventory ? 'MY GEAR' : 'ITEM COMPARE';
+  element('.heading-meta strong').textContent = inventory ? 'MY GEAR' : 'ITEM COMPARISON';
+}
+window.addEventListener('hashchange', showView);
+showView();
 renderAll();
 
 for (const item of state.items) {

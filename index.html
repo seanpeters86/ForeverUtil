@@ -21,7 +21,7 @@
 <body>
   <header class="topbar">
     <a class="brand" href="./" aria-label="ForeverUtil home"><span class="brand-mark">F<span>.</span></span><span>FOREVER<span>UTIL</span></span></a>
-    <nav aria-label="Main navigation"><a class="nav-active" href="#compare">Item compare</a></nav>
+    <nav aria-label="Main navigation"><a class="nav-active" href="#compare" data-view="compare">Item compare</a><a href="#inventory" data-view="inventory">My gear</a></nav>
     <div class="top-right"><span class="status-dot"></span> WOW FOREVER <span class="top-separator"></span> <a href="https://www.wowhead.com/forever" target="_blank" rel="noopener noreferrer">Wowhead <span aria-hidden="true">↗</span></a><button id="theme-toggle" type="button" aria-label="Dark mode" aria-pressed="false" title="Switch to dark mode"></button></div>
   </header>
 
@@ -40,6 +40,23 @@
         <div class="breakdown-heading"><div><div class="section-kicker">THE DETAILS</div><h2>Stat breakdown</h2></div><span class="breakdown-note">VALUES ARE EDITABLE</span></div>
         <div class="stat-table" id="stat-table"></div>
         <div class="disclaimer"><span>i</span><p>Weapon DPS weights are estimates for melee weapons in the selected hand. Speed effects, weapon type, poisons, procs, set bonuses, gems, enchants, caps, and other effects are not modeled. Verify imported stats against the Wowhead tooltip.</p></div>
+      </section>
+
+      <section id="gear-workspace" class="inventory" aria-labelledby="inventory-title" hidden>
+        <div class="section-heading"><div><div class="section-kicker">YOUR CHARACTER</div><h2 id="inventory-title">Gear from SimC</h2></div><span class="inventory-count" id="inventory-count"></span></div>
+        <form id="simc-form" class="simc-form">
+          <label for="simc-export">SIMC ADDON EXPORT</label>
+          <textarea id="simc-export" rows="5" placeholder="Paste your SimC addon export"></textarea>
+          <div class="form-actions"><button class="primary-button" type="submit">Import gear</button><span>Import replaces saved gear.</span><span id="simc-message" role="status"></span></div>
+        </form>
+        <div class="inventory-toolbar"><label for="inventory-slot">SLOT</label><select id="inventory-slot"></select><button id="refresh-gear" type="button" class="text-button">Refresh items</button></div>
+        <div id="inventory-summary" class="inventory-summary" role="status" aria-live="polite"></div>
+        <div id="inventory-list" class="inventory-list"></div>
+        <div class="inventory-add"><div class="section-kicker">ADD A CANDIDATE</div><h2>Find an item</h2>
+          <form id="inventory-lookup"><div class="lookup"><label class="sr-only" for="inventory-query">Item name, Wowhead URL or ID</label><input id="inventory-query" name="query" placeholder="Item name, Wowhead URL or ID" autocomplete="off"><button type="submit">Find item</button></div><label class="bonus-field" for="inventory-bonus"><span>Bonus ID <small>(optional)</small></span><input id="inventory-bonus" name="bonus" placeholder="e.g. 12721" autocomplete="off"></label></form>
+          <p id="inventory-message" class="lookup-message" aria-live="polite"></p><div id="inventory-results" class="search-results" hidden></div>
+        </div>
+        <div class="disclaimer"><span>i</span><p>Scores are estimates. Check class, level and weapon proficiency in game. Speed effects, weapon type, poisons, procs, set bonuses, gems, enchants and caps are not modeled. Unresolved items can change the result.</p></div>
       </section>
 
       <aside class="weights-panel" aria-labelledby="weights-title">

@@ -1,5 +1,21 @@
 import { strict as assert } from 'node:assert';
 import { test } from 'node:test';
+import { bestWeaponPair, bonusChangesItem, parseSimcExport, tooltipSlot } from './src/simc.ts';
+
+test('parses equipped and bag gear without treating other comments as items', () => {
+  const items = parseSimcExport(`# Dagger (30)
+off_hand=,id=15242,bonus_id=12721/12345,enchant_id=15
+bag1=,id=5573
+### Gear from Bags
+# Wingblade (24)
+# main_hand=,id=6504
+### Additional Character Info
+# main_hand=,id=999`);
+  assert.deepEqual(items, [
+    { id: '15242', bonus: '12721:12345', slot: 'off_hand', name: 'Dagger', equipped: true, modifiers: ['enchant_id=15'] },
+    { id: '6504', slot: 'main_hand', name: 'Wingblade', equipped: false, modifiers: [] },
+  ]);
+});
 import { compareScores, defaultWeaponWeights, defaultWeights, emptyStats, itemIdFromInput, itemReferenceFromInput, parseTooltipStats, parseTooltipWeapon, scoreItem } from './src/compare.ts';
 
 test('scores stats with the provided weights', () => {
@@ -47,4 +63,30 @@ test('parses melee weapon DPS and speed without treating armor or ranged weapons
   assert.equal(parseTooltipWeapon('<!--scstart2:2--><span>Bow</span><!--dps-->(18.00 damage per second)'), undefined);
   assert.equal(parseTooltipWeapon('<!--scstart2:15--><span>Dagger</span><!--dps-->(0 damage per second)'), undefined);
   assert.equal(parseTooltipWeapon('<!--scstart2:15--><span>Dagger</span>'), undefined);
+});
+
+test('validates weapon hands and chooses distinct items using both hand weights', () => {
+  assert.deepEqual(tooltipSlot('<table><tr><td>One-Hand</td><th>Dagger</th></tr></table>'), { group: 'weapons', hand: 'both' });
+  assert.deepEqual(tooltipSlot('<td>Main Hand</td>'), { group: 'weapons', hand: 'main' });
+  assert.equal(tooltipSlot('<td>Unknown</td>'), null);
+  const stats = emptyStats();
+  const weapons = [{ key: 0, hand: 'both', dps: 20, stats }, { key: 1, hand: 'main', dps: 19, stats }, { key: 2, hand: 'both', dps: 10, stats }];
+  const best = bestWeaponPair(weapons, defaultWeights(), defaultWeaponWeights());
+  assert.equal(best.main, 1);
+  assert.equal(best.off, 0);
+  assert.ok(Math.abs(best.score - 224.79) < 0.00001);
+  assert.equal(bestWeaponPair(weapons.slice(0, 1), defaultWeights(), defaultWeaponWeights()), null);
+});
+
+test('detects whether a requested bonus changed visible item data', () => {
+  const base = '<!--nstart--><b>Stiletto</b><!--nend--><!--stat3-->+2';
+  assert.equal(bonusChangesItem(base, base), false);
+  assert.equal(bonusChangesItem(base.replace('+2', '+3'), base), true);
+});
+
+test('keeps invalid bonus IDs unresolved instead of silently applying them', () => {
+  assert.deepEqual(parseSimcExport('# Sword (20)\nmain_hand=,id=5,bonus_id=bad'), [
+    { id: '5', slot: 'main_hand', name: 'Sword', equipped: true, modifiers: ['bonus_id=bad'] },
+  ]);
+  assert.deepEqual(parseSimcExport('### Additional Character Info\n# main_hand=,id=5'), []);
 });
