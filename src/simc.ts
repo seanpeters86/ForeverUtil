@@ -1,5 +1,5 @@
-import { parseTooltipStats, parseTooltipWeapon, scoreItem } from './compare.ts';
-import type { ItemReference, StatValues, WeaponWeights } from './compare.ts';
+import { parseTooltipStats, parseTooltipWeapon, parseTooltipWeaponDamage, parseTooltipWeaponType, scoreItem } from './compare.ts';
+import type { ItemReference, StatValues, WeaponType, WeaponWeights } from './compare.ts';
 
 export const GEAR_SLOTS = ['head', 'neck', 'shoulder', 'back', 'chest', 'shirt', 'tabard', 'wrist', 'hands', 'waist', 'legs', 'feet', 'finger1', 'finger2', 'trinket1', 'trinket2', 'main_hand', 'off_hand', 'ranged'] as const;
 export type GearSlot = typeof GEAR_SLOTS[number];
@@ -28,7 +28,7 @@ export function tooltipSlot(tooltip: string): { group: ItemGroup; hand: HandUse 
 
 export function bonusChangesItem(tooltip: string, baseTooltip: string): boolean {
   const name = (value: string) => value.match(/<!--nstart-->\s*<b[^>]*>(.*?)<\/b>/i)?.[1];
-  return name(tooltip) !== name(baseTooltip) || JSON.stringify(parseTooltipStats(tooltip)) !== JSON.stringify(parseTooltipStats(baseTooltip)) || JSON.stringify(parseTooltipWeapon(tooltip)) !== JSON.stringify(parseTooltipWeapon(baseTooltip));
+  return name(tooltip) !== name(baseTooltip) || JSON.stringify(parseTooltipStats(tooltip)) !== JSON.stringify(parseTooltipStats(baseTooltip)) || JSON.stringify(parseTooltipWeapon(tooltip)) !== JSON.stringify(parseTooltipWeapon(baseTooltip)) || parseTooltipWeaponType(tooltip) !== parseTooltipWeaponType(baseTooltip) || JSON.stringify(parseTooltipWeaponDamage(tooltip)) !== JSON.stringify(parseTooltipWeaponDamage(baseTooltip));
 }
 
 export type RankedWeapon = { hand: HandUse; stats: StatValues; dps: number; key: number };
@@ -38,6 +38,25 @@ export function bestWeaponPair(items: RankedWeapon[], weights: StatValues, weapo
     if (main.key === off.key || !['main', 'both'].includes(main.hand) || !['off', 'both'].includes(off.hand)) continue;
     const score = scoreItem(main.stats, weights, main.dps, weaponWeights.mainHand) + scoreItem(off.stats, weights, off.dps, weaponWeights.offHand);
     if (!best || score > best.score) best = { main: main.key, off: off.key, score };
+  }
+  return best;
+}
+
+export type WeaponPlaystyle = 'subtlety-swap' | 'dagger' | 'combat' | 'mutilate' | 'custom';
+export type SetupWeapon = RankedWeapon & { type: WeaponType | null; speed: number | null };
+
+export function bestWeaponSetup(items: SetupWeapon[], weights: StatValues, weaponWeights: WeaponWeights, playstyle: WeaponPlaystyle, daggerOffHand: boolean): { main: number; off: number; score: number; opener: number | null } | null {
+  const mainItems = items.filter(item => item.type !== null && (playstyle === 'dagger' || playstyle === 'mutilate' ? item.type === 'dagger' : playstyle === 'subtlety-swap' || playstyle === 'combat' ? item.type !== 'dagger' : true));
+  const offItems = items.filter(item => item.type !== null && (!(daggerOffHand || playstyle === 'mutilate') || item.type === 'dagger'));
+  let best: { main: number; off: number; score: number; opener: number | null } | null = null;
+  for (const main of mainItems) for (const off of offItems) {
+    if (main.key === off.key || !['main', 'both'].includes(main.hand) || !['off', 'both'].includes(off.hand)) continue;
+    const score = scoreItem(main.stats, weights, main.dps, weaponWeights.mainHand) + scoreItem(off.stats, weights, off.dps, weaponWeights.offHand);
+    if (!best || score > best.score) best = { main: main.key, off: off.key, score, opener: null };
+  }
+  if (best && playstyle === 'subtlety-swap') {
+    const opener = items.filter(item => item.type === 'dagger' && item.key !== best!.off && ['main', 'both'].includes(item.hand)).sort((left, right) => right.dps - left.dps)[0];
+    best.opener = opener?.key ?? null;
   }
   return best;
 }

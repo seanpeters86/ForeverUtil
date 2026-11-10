@@ -1,6 +1,6 @@
 import { strict as assert } from 'node:assert';
 import { test } from 'node:test';
-import { bestWeaponPair, bonusChangesItem, parseSimcExport, tooltipSlot } from './src/simc.ts';
+import { bestWeaponPair, bestWeaponSetup, bonusChangesItem, parseSimcExport, tooltipSlot } from './src/simc.ts';
 
 test('parses equipped and bag gear without treating other comments as items', () => {
   const items = parseSimcExport(`# Dagger (30)
@@ -16,7 +16,7 @@ bag1=,id=5573
     { id: '6504', slot: 'main_hand', name: 'Wingblade', equipped: false, modifiers: [] },
   ]);
 });
-import { compareScores, defaultWeaponWeights, defaultWeights, emptyStats, itemIdFromInput, itemReferenceFromInput, parseTooltipStats, parseTooltipWeapon, scoreItem } from './src/compare.ts';
+import { compareScores, defaultWeaponWeights, defaultWeights, emptyStats, itemIdFromInput, itemReferenceFromInput, parseTooltipStats, parseTooltipWeapon, parseTooltipWeaponDamage, parseTooltipWeaponType, scoreItem } from './src/compare.ts';
 
 test('scores stats with the provided weights', () => {
   assert.equal(scoreItem({ ...emptyStats(), agility: 10, expertise: 5 }, defaultWeights()), 28.6);
@@ -82,6 +82,8 @@ test('detects whether a requested bonus changed visible item data', () => {
   const base = '<!--nstart--><b>Stiletto</b><!--nend--><!--stat3-->+2';
   assert.equal(bonusChangesItem(base, base), false);
   assert.equal(bonusChangesItem(base.replace('+2', '+3'), base), true);
+  assert.equal(bonusChangesItem('<!--dmg-->15 - 29 Damage', '<!--dmg-->14 - 29 Damage'), true);
+  assert.equal(bonusChangesItem('<!--scstart2:7-->', '<!--scstart2:15-->'), true);
 });
 
 test('keeps invalid bonus IDs unresolved instead of silently applying them', () => {
@@ -89,4 +91,35 @@ test('keeps invalid bonus IDs unresolved instead of silently applying them', () 
     { id: '5', slot: 'main_hand', name: 'Sword', equipped: true, modifiers: ['bonus_id=bad'] },
   ]);
   assert.deepEqual(parseSimcExport('### Additional Character Info\n# main_hand=,id=5'), []);
+});
+
+test('identifies rogue weapon types and leaves unknown types unknown', () => {
+  for (const [id, type] of [[0, 'axe'], [4, 'mace'], [7, 'sword'], [13, 'fist'], [15, 'dagger']]) {
+    assert.equal(parseTooltipWeaponType(`<!--scstart2:${id}-->`), type);
+  }
+  assert.equal(parseTooltipWeaponType('<!--scstart2:2-->'), null);
+  assert.equal(parseTooltipWeaponType(''), null);
+});
+
+test('selects legal playstyle weapons and a separate available Ambush dagger', () => {
+  const stats = emptyStats();
+  const weapons = [
+    { key: 0, hand: 'both', type: 'sword', dps: 20, speed: 2.8, stats },
+    { key: 1, hand: 'both', type: 'dagger', dps: 19, speed: 1.4, stats },
+    { key: 2, hand: 'main', type: 'dagger', dps: 18, speed: 1.8, stats },
+    { key: 3, hand: 'both', type: null, dps: 100, speed: null, stats },
+  ];
+  const swap = bestWeaponSetup(weapons, defaultWeights(), defaultWeaponWeights(), 'subtlety-swap', true);
+  assert.deepEqual([swap.main, swap.off, swap.opener], [0, 1, 2]);
+  const mutilate = bestWeaponSetup(weapons, defaultWeights(), defaultWeaponWeights(), 'mutilate', false);
+  assert.deepEqual([mutilate.main, mutilate.off, mutilate.opener], [2, 1, null]);
+  assert.equal(bestWeaponSetup(weapons.slice(0, 2), defaultWeights(), defaultWeaponWeights(), 'mutilate', false), null);
+  assert.equal(bestWeaponSetup(weapons.slice(0, 2), defaultWeights(), defaultWeaponWeights(), 'subtlety-swap', true).opener, null);
+});
+
+test('parses tooltip damage ranges without inventing missing values', () => {
+  assert.deepEqual(parseTooltipWeaponDamage('<!--dmg-->15 - 29 Damage'), { min: 15, max: 29 });
+  assert.deepEqual(parseTooltipWeaponDamage('<!--dmg-->1,234 - 1,500 Damage'), { min: 1234, max: 1500 });
+  assert.equal(parseTooltipWeaponDamage('<!--dmg-->29 - 15 Damage'), null);
+  assert.equal(parseTooltipWeaponDamage('<!--dps-->(15.71 damage per second)'), null);
 });

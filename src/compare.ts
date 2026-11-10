@@ -16,6 +16,21 @@ export type StatValues = Record<StatKey, number>;
 export type WeaponHand = 'mainHand' | 'offHand';
 export type WeaponWeights = Record<WeaponHand, number>;
 export type WeaponData = { dps: number; speed: number | null };
+export type WeaponType = 'axe' | 'mace' | 'sword' | 'fist' | 'dagger';
+
+export function parseTooltipWeaponType(tooltip: string): WeaponType | null {
+  const subtype = tooltip.match(/<!--scstart2:(\d+)-->/)?.[1];
+  const types: Record<string, WeaponType> = { '0': 'axe', '4': 'mace', '7': 'sword', '13': 'fist', '15': 'dagger' };
+  return subtype === undefined ? null : types[subtype] ?? null;
+}
+
+export function parseTooltipWeaponDamage(tooltip: string): { min: number; max: number } | null {
+  const match = tooltip.match(/<!--dmg-->\s*([\d,]+(?:\.\d+)?)\s*-\s*([\d,]+(?:\.\d+)?)\s+Damage\b/i);
+  if (!match?.[1] || !match[2]) return null;
+  const min = Number(match[1].replaceAll(',', ''));
+  const max = Number(match[2].replaceAll(',', ''));
+  return Number.isFinite(min) && Number.isFinite(max) && min > 0 && max >= min ? { min, max } : null;
+}
 
 export const defaultWeaponWeights = (): WeaponWeights => ({ mainHand: 9.81, offHand: 1.92 });
 

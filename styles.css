@@ -132,6 +132,11 @@ h1 span { color: var(--positive); }
 .inventory-toolbar { display: flex; align-items: center; gap: 12px; margin: 24px 0 12px; }
 .inventory-toolbar select { min-width: 150px; height: 36px; padding: 0 10px; border: 1px solid var(--line); border-radius: 3px; color: var(--ink); background: var(--surface); }
 .inventory-toolbar button { margin-left: auto; }
+.weapon-setup-controls { display: flex; align-items: center; flex-wrap: wrap; gap: 10px 12px; margin: 0 0 12px; }
+.weapon-setup-controls > label:first-child { color: var(--secondary); font: 700 10px var(--mono-font); }
+.weapon-setup-controls select { max-width: 100%; min-width: 0; height: 36px; padding: 0 10px; border: 1px solid var(--line); border-radius: 3px; color: var(--ink); background: var(--surface); }
+.dagger-option { display: inline-flex; align-items: center; gap: 6px; color: var(--secondary); font-size: 12px; }
+.dagger-option input { accent-color: var(--accent); }
 .inventory-summary { padding: 13px 15px; border: 1px solid var(--line); background: var(--surface-soft); color: var(--secondary); font-size: 12px; line-height: 1.5; }
 .inventory-summary strong { color: var(--ink); }
 .inventory-summary.has-recommendation { padding: 0; border-color: var(--winner-line); border-radius: 4px; background: var(--surface); }
@@ -154,6 +159,8 @@ h1 span { color: var(--positive); }
 .recommendation-identity a:hover { text-decoration: underline; }
 .recommendation-meta { display: block; margin-top: 3px; color: var(--muted); font: 10px/1.5 var(--mono-font); }
 .recommendation-warning { padding: 9px 16px; border-top: 1px solid var(--line); color: var(--secondary); background: var(--surface-soft); font-size: 11px; }
+.recommendation-opener { border-top: 1px solid var(--line); }
+.recommendation-opener .recommendation-item { border: 0; }
 .inventory-list { margin-top: 12px; border-top: 1px solid var(--line); }
 .inventory-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(110px, auto) 28px; align-items: center; gap: 12px; padding: 12px 10px; border-bottom: 1px solid var(--line); background: var(--surface); }
 .inventory-row.is-recommended { box-shadow: inset 3px 0 var(--winner-line); background: var(--winner-surface); }

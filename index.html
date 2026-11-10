@@ -50,13 +50,18 @@
           <div class="form-actions"><button class="primary-button" type="submit">Import gear</button><span>Import replaces saved gear.</span><span id="simc-message" role="status"></span></div>
         </form>
         <div class="inventory-toolbar"><label for="inventory-slot">SLOT</label><select id="inventory-slot"></select><button id="refresh-gear" type="button" class="text-button">Refresh items</button></div>
+        <div id="weapon-setup-controls" class="weapon-setup-controls">
+          <label for="weapon-playstyle">WEAPON SETUP</label>
+          <select id="weapon-playstyle"><option value="subtlety-swap">Subtlety / Ambush swap</option><option value="dagger">Dagger / Backstab</option><option value="combat">Combat / non-dagger</option><option value="mutilate">Mutilate / dual daggers</option><option value="custom">Custom / any weapon</option></select>
+          <label class="dagger-option"><input id="dagger-off-hand" type="checkbox" checked> Dagger off hand</label>
+        </div>
         <div id="inventory-summary" class="inventory-summary" role="status" aria-live="polite"></div>
         <div id="inventory-list" class="inventory-list"></div>
         <div class="inventory-add"><div class="section-kicker">ADD A CANDIDATE</div><h2>Find an item</h2>
           <form id="inventory-lookup"><div class="lookup"><label class="sr-only" for="inventory-query">Item name, Wowhead URL or ID</label><input id="inventory-query" name="query" placeholder="Item name, Wowhead URL or ID" autocomplete="off"><button type="submit">Find item</button></div><label class="bonus-field" for="inventory-bonus"><span>Bonus ID <small>(optional)</small></span><input id="inventory-bonus" name="bonus" placeholder="e.g. 12721" autocomplete="off"></label></form>
           <p id="inventory-message" class="lookup-message" aria-live="polite"></p><div id="inventory-results" class="search-results" hidden></div>
         </div>
-        <div class="disclaimer"><span>i</span><p>Scores are estimates. Check class, level and weapon proficiency in game. Speed effects, weapon type, poisons, procs, set bonuses, gems, enchants and caps are not modeled. Unresolved items can change the result.</p></div>
+        <div class="disclaimer"><span>i</span><p>Scores are estimates. Weapon type filters the selected setup, but speed effects, weapon type bonuses, poisons, procs, set bonuses, gems, enchants and caps are not scored. Check class, level and weapon proficiency in game. Unresolved items can change the result.</p></div>
       </section>
 
       <aside class="weights-panel" aria-labelledby="weights-title">
